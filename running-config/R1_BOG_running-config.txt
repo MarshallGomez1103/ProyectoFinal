@@ -1,0 +1,187 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1_BOG
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+ipv6 dhcp pool BOG10
+ address prefix 2001:1200:FA15::/118 lifetime 172800 86400
+ dns-server 2001:1200:FC15::2
+!
+ipv6 dhcp pool BOG20
+ address prefix 2001:1200:FA15::400/118 lifetime 172800 86400
+ dns-server 2001:1200:FC15::2
+!
+ipv6 dhcp pool BOG30
+ address prefix 2001:1200:FA15::800/120 lifetime 172800 86400
+ dns-server 2001:1200:FC15::2
+!
+!
+!
+!
+license udi pid CISCO2811/K9 sn FTX1017L1VI-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip name-server 2001:1200:FC15::2
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no ip address
+ ipv6 address 2001:1200:FE15::/48
+!
+interface FastEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/0.10
+ encapsulation dot1Q 10
+ no ip address
+ ipv6 traffic-filter ACL_INVITADOS_BOG in
+ ipv6 address 2001:1200:FA15::1/118
+ ipv6 nd managed-config-flag
+ ipv6 ospf 1 area 0
+ ipv6 dhcp server BOG10
+!
+interface FastEthernet0/0.20
+ encapsulation dot1Q 20
+ no ip address
+ ipv6 traffic-filter ACL_INTERNOS_BOG in
+ ipv6 address 2001:1200:FA15::401/118
+ ipv6 nd managed-config-flag
+ ipv6 ospf 1 area 0
+ ipv6 dhcp server BOG20
+!
+interface FastEthernet0/0.30
+ encapsulation dot1Q 30
+ no ip address
+ ipv6 address 2001:1200:FA15::801/120
+ ipv6 nd managed-config-flag
+ ipv6 ospf 1 area 0
+ ipv6 dhcp client pd 2001:1200:FA15::802
+!
+interface FastEthernet0/0.99
+ encapsulation dot1Q 99 native
+ no ip address
+ ipv6 address 2001:1200:FA15::901/120
+ ipv6 ospf 1 area 0
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ ipv6 address 2001:1200:FC15::1/124
+ ipv6 ospf 1 area 0
+!
+interface Serial1/0
+ no ip address
+ ipv6 address 2001:1200:FC15::11/126
+ ipv6 ospf 1 area 0
+!
+interface Serial1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/2
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/3
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/4
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/5
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/6
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/7
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ipv6 router ospf 1
+ router-id 4.4.4.4
+ log-adjacency-changes
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ipv6 access-list SNMP-BOG
+ permit ipv6 2001:1200:FA15:400::/118 any
+ deny ipv6 any any
+ipv6 access-list BLOQUEAR_SNMP
+ deny udp 2001:1200:FA15:118::/118 any eq snmp
+ permit ipv6 any any
+ipv6 access-list ACL_INVITADOS_BOG
+ permit tcp 2001:1200:FA15:118::/118 any eq www
+ deny tcp any any eq 443
+ permit ipv6 any any
+ipv6 access-list ACL_INTERNOS_BOG
+ deny tcp any any eq www
+ permit tcp any any eq 443
+ permit ipv6 any any
+!
+!
+!
+!
+snmp-server community public RO
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+

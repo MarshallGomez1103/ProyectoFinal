@@ -1,0 +1,154 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname ISP_ESP
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+!
+ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2811/K9 sn FTX10179OEA-
+!
+!
+!
+crypto isakmp policy 10
+ encr aes
+ authentication pre-share
+ group 2
+!
+crypto isakmp key vpnuser address 86.106.82.5
+!
+!
+!
+crypto ipsec transform-set myset esp-aes esp-sha-hmac
+!
+crypto map mymap 10 ipsec-isakmp 
+ set peer 86.106.82.5
+ set transform-set myset 
+ match address 100
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Tunnel0
+ no ip address
+ mtu 1476
+ ipv6 address 2001:1200:FF15::2/128
+ ipv6 ospf 1 area 0
+ tunnel source Serial1/1
+ tunnel destination 86.106.82.5
+ tunnel mode ipv6ip
+!
+!
+interface FastEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial1/0
+ no ip address
+ ipv6 address 2001:1200:FD25::2/126
+ ipv6 ospf 1 area 0
+!
+interface Serial1/1
+ ip address 86.106.82.14 255.255.255.252
+ clock rate 2000000
+!
+interface Serial1/2
+ ip address 86.106.82.10 255.255.255.252
+ clock rate 2000000
+!
+interface Serial1/3
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/4
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/5
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/6
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial1/7
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 80
+ eigrp router-id 3.3.3.3
+ network 86.106.82.8 0.0.0.3
+!
+router ospf 1
+ router-id 3.3.3.3
+ log-adjacency-changes
+ network 86.106.82.12 0.0.0.3 area 0
+!
+ipv6 router ospf 1
+ router-id 3.3.3.3
+ log-adjacency-changes
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+access-list 100 permit ip any any
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
